@@ -1,26 +1,39 @@
+from subprocess import Popen, PIPE
+import time
 from utils import save_result
-import subprocess
+
+
+def organized_output(filename):
+    return filename.replace('http://', '').replace('https://', '').replace('/', '').replace('.', '_')
+
+
 def run_command(command):
-    process = Popen(command, stdout=PIPE, stderr=PIPE, shell=True)
+    process = Popen(command, shell=True, stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
-    return  stdout.decode("utf-8"), stderr.decode("utf-8")
+    return stdout.decode(), stderr.decode()
+
 
 def analyze_sql_injection():
-    url = input("digite a url a ser analizada")
-    print(f"analizando... {url}")
-    output, error = run_command("sqlmap -u '{url}'--batch --dbs")
+    starttime = time.time()
+    url = input("Digite a URL para análise de SQL Injection: ")
+    print(f"Executando análise {url} de SQL Injection com Nmap...")
+    output, error = run_command(f'sqlmap -u "{url}" --batch --dbs')
+    endtime = time.time()
+
+    print(f"Tempo de execução: {(endtime - starttime):.2f} segundos.")
+
+    # conclusão, não faço a menor ideia de como voltou a funcionar!
 
     if error:
-        print(f'o erro: {error}')
+        print("Error:", error)
     else:
         print(output)
-        save = input("Deseja salvar o resultado? (s/n) ")
-        if save == "s":
+        save = input("Deseja salvar os resultados? (s/n): ")
+        if save.lower() == 's':
             organized = organized_output(url)
-            date_to_save ={
-                'url': url,
+            data_to_save = {
+                "url": url,
                 "output": output
             }
-            save_result(date_to_save, 'sql_injection', f"sql_injection_{organized}.json")
-
-    pass:
+            save_result(data_to_save, "sql_injection_results", f"sql_injection_{organized}.json")
+            print(f"Resultados da análise de SQL Injection salvos.")
