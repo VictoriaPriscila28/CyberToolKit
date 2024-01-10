@@ -1,7 +1,5 @@
-import time
 import requests
-from utils import save_result
-
+from utils import save_results
 
 def test_xss():
     url = input("Digite a URL para teste de XSS: ")
@@ -31,7 +29,6 @@ def test_xss():
 
     results = []
 
-    start_time = time.time()
     for payload in xss_payloads:
         try:
             response = requests.get(url + payload, timeout=5)
@@ -42,12 +39,9 @@ def test_xss():
                 results.append({"payload": payload, "vulnerable": False})
         except requests.exceptions.RequestException as e:
             print(f"Erro ao testar payload '{payload}': {e}")
-    end_time = time.time()
-
-    print(f"Tempo de execução: {(end_time - start_time):.2f} segundos.")
 
     save = input("Deseja salvar os resultados? (s/n): ")
     if save.lower() == 's':
         sanitized_url = url.replace('http://', '').replace('https://', '').replace('/', '_')
-        save_result(results, "xss_results", f"xss_test_{sanitized_url}.json")
+        save_results(results, "xss_results", f"xss_test_{sanitized_url}.json")
         print("Resultados salvos.")
