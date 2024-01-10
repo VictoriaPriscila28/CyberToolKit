@@ -26,7 +26,6 @@ def run_hydra(target_url, user_file_path, pass_file_path, service_module, login_
                 for username, password in matches:
                     print(f"Combinação bem-sucedida encontrada: {username} / {password}")
 
-                # Opção para salvar os resultados
                 save_option = input("Deseja salvar os resultados? (s/n): ")
                 if save_option.lower() == 's':
                     save_result(matches, "hydra_results", f"hydra_{target_url.replace('/', '_')}.json")
